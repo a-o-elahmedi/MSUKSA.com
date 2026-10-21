@@ -1,9 +1,9 @@
 // Renders every built page in Chrome at desktop and mobile widths and checks layout, images, menu, language switch and the enquiry form.
-// Usage: node scripts/browser-check.mjs [screenshot-dir]   (expects `npm run dev` on port 3000)
+// Usage: node scripts/browser-check.mjs [screenshot-dir]   (expects `npm run dev` on port 3000, or set BASE_URL to test a deployed copy)
 import {chromium} from '@playwright/test';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-const base='http://127.0.0.1:3000', shots=process.argv[2];
+const base=process.env.BASE_URL||'http://127.0.0.1:3000', shots=process.argv[2];
 const sitemap=await fs.readFile('dist/sitemap.xml','utf8');
 const routes=[...sitemap.matchAll(/<loc>https:\/\/msuksa\.com(.*?)<\/loc>/g)].map(m=>m[1]);
 const browser=await chromium.launch({channel:'chrome'});

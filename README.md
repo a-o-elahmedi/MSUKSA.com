@@ -16,7 +16,22 @@ $env:PATH="$PWD\.tools\node-v24.21.0-win-x64;$env:PATH"
 | `npm run test:browser` | With `npm run dev` running: renders every page in Chrome at desktop/tablet/mobile and tests the menu, language switch and enquiry form. Pass a folder to save screenshots. |
 | `npm run assets` | Re-creates the optimised images and public brochures from the original MSU source folders and `source-images/` (originals are kept outside `public/`; files marked `DO-NOT-PUBLISH` carry third-party logos) |
 
-Deploy by uploading the contents of `dist/` to any static host. On Netlify or Cloudflare Pages, `_headers` applies the security headers automatically.
+## Deployment (Oracle Cloud)
+
+The site is hosted on the Oracle Cloud Ubuntu server `84.13.154.40` (SSH key `~/.ssh/oracle-msu`, user `ubuntu`). Files live in `/var/www/msuksa.com` and are served by Caddy, which also provides automatic HTTPS.
+
+- **Deploy:** `.\scripts\deploy.ps1` builds, runs `npm test`, uploads, and swaps the new files in all at once.
+- **Verify:** `$env:BASE_URL='https://msuksa.84-13-154-40.sslip.io'; npm run test:browser`
+- **Caddy:** `/etc/caddy/Caddyfile` defines a `(msu_site)` snippet with the file server, security headers and 404 page. The same server also runs another app at `84-13-154-40.sslip.io`, so never replace the whole Caddyfile. Edit it, run `sudo caddy validate --config /etc/caddy/Caddyfile`, then `sudo systemctl reload caddy`.
+- **Going live on msuksa.com:** at GoDaddy, set the `A` records for `@` and `www` to `84.13.154.40` and remove the current Cloudflare-hosted records. Then add this to the Caddyfile and reload:
+  ```
+  msuksa.com, www.msuksa.com {
+  	import msu_site
+  }
+  ```
+  Caddy obtains the certificates once DNS resolves to the server.
+
+`dist/_headers` applies the same headers automatically if the site is ever moved to Netlify or Cloudflare Pages.
 
 ## Updating content
 
