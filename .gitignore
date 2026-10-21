@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.tools/
+test-results/
+.env
+
+# Contain a third-party logo; kept locally, never published
+source-images/*DO-NOT-PUBLISH*
+source-images/guard-room-collage-with-logo.jpg
